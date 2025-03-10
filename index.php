@@ -70,29 +70,93 @@
     <br>
     <h1 class="text-center">CRONOLOGIA</h1>
     <DIv class="w-25 mx-auto my-auto  text-center">
-    <table class="table table-hover table-dark">
-        <tr>
-        <th><p>Modelli Visualizzati In Precedenza</p><th>
-        </tr>
-    <?php
-      $arrayModels = $_SESSION['cronologiaModelli'];
-      if(empty($arrayModels)){
-        echo '<tr>';
-        echo '<td>';
-        echo 'Non hai ancora visualizzato nessun modello';
-        echo '</td>';
-        echo '</tr>';
-      }else{
-        for($i=0;$i<count($arrayModels);$i++){
+      <table class="table mx-auto my-auto table-hover table-dark">
+          <tr>
+          <th><p>Modelli Visualizzati In Precedenza</p><th>
+          </tr>
+      <?php
+        $arrayModels = $_SESSION['cronologiaModelli'];
+        if(empty($arrayModels)){
           echo '<tr>';
           echo '<td>';
-          echo $arrayModels[$i];
+          echo 'Non hai ancora visualizzato nessun modello';
           echo '</td>';
           echo '</tr>';
+        }else{
+          for($i=0;$i<count($arrayModels);$i++){
+            echo '<tr>';
+            echo '<td>';
+            echo $arrayModels[$i];
+            echo '</td>';
+            echo '</tr>';
+          }
         }
-      }
-    ?>
-    </DIv>
+      ?>
+      </table>
+      </DIv>
+    <br>
+    <div class="w-50 mx-auto my-auto text-center">
+    <h1 class="text-center">-- Catalogo Dei Modelli --</h1>
+    <form action="<?php echo $_SERVER['PHP_SELF']; //PER INVIARE I DATI ALLA STESSA PAGINA DEL FORM?>">
+      <div class="container w-25 mx-auto my-auto text-center">
+        <div class="row">
+          <div class="col">
+            <h6>Prezzo Min</h6>
+            <input type="number" class="form-control" id="filtroPrezzoMin" name="filtroPrezzoMin">
+          </div>
+          <div class="col">
+            <h6>Prezzo Max</h6>
+            <input type="number" class="form-control" id="filtroPrezzoMax" name="filtroPrezzoMax">
+          </div>
+        </div>
+      </div>
+      <br>
+      <button type="submit" class="btn btn-success">Cerca Nel Catalogo</button>
+    </form>
+    <br>
+      <?php
+          echo '<table class="table table-bordered">';
+          echo '<tr>';
+            echo '<th>MODELLO</th>';
+            echo '<th>MARCA</th>';
+            echo '<th>PREZZO</th>';
+          echo '</tr>';
+          if (!empty($_GET['filtroPrezzoMin']) && !empty($_GET['filtroPrezzoMax'])) { 
+            // Se si applicano entrambi i filtri
+            $query = mysqli_query($conn, "SELECT modelli.nome, marchi.nome as nMarca, modelli.prezzo_base 
+                FROM modelli 
+                JOIN marchi ON marchi.id_marchio = modelli.id_marchio 
+                WHERE prezzo_base >= " . $_GET['filtroPrezzoMin'] . " AND prezzo_base <= " . $_GET['filtroPrezzoMax']);
+        } else if (!empty($_GET['filtroPrezzoMin'])) { 
+            // Se si applica solo il filtro del prezzo minimo
+            $query = mysqli_query($conn, "SELECT modelli.nome, marchi.nome as nMarca, modelli.prezzo_base 
+                FROM modelli 
+                JOIN marchi ON marchi.id_marchio = modelli.id_marchio 
+                WHERE prezzo_base >= " . $_GET['filtroPrezzoMin']);
+        } else if (!empty($_GET['filtroPrezzoMax'])) { 
+            // Se si applica solo il filtro del prezzo massimo
+            $query = mysqli_query($conn, "SELECT modelli.nome, marchi.nome as nMarca, modelli.prezzo_base 
+                FROM modelli 
+                JOIN marchi ON marchi.id_marchio = modelli.id_marchio 
+                WHERE prezzo_base <= " . $_GET['filtroPrezzoMax']);
+        } else { 
+            // Se non si usano filtri
+            $query = mysqli_query($conn, "SELECT modelli.nome, marchi.nome as nMarca, modelli.prezzo_base 
+                FROM modelli 
+                JOIN marchi ON marchi.id_marchio = modelli.id_marchio");
+        }
+          while ($row = mysqli_fetch_assoc($query)) {
+            echo "<tr>";
+            echo '<td>' . $row['nome'] . '</td>';
+            echo '<td>' . $row['nMarca'] . '</td>';
+            echo '<td>' . $row['prezzo_base'] . '</td>';
+            echo "</tr>";
+          }
+    
+        echo '</table>';
+      ?>
+
+  </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   </body>
 </html>

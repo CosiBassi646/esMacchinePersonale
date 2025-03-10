@@ -1,0 +1,58 @@
+CREATE DATABASE auto_sportive;
+USE auto_sportive;
+
+-- Tabella dei marchi automobilistici
+CREATE TABLE marchi (
+    id_marchio INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    nazione VARCHAR(50) NOT NULL,
+    anno_fondazione INT NOT NULL,
+    sito_web VARCHAR(100)
+);
+
+-- Tabella dei modelli di auto
+CREATE TABLE modelli (
+    id_modello INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL,
+    anno_produzione INT NOT NULL,
+    velocita_max INT NOT NULL,
+    prezzo_base DECIMAL(10,2) NOT NULL,
+    id_marchio INT NOT NULL,
+    FOREIGN KEY (id_marchio) REFERENCES marchi(id_marchio) ON DELETE CASCADE
+);
+
+-- Tabella dei colori disponibili per ogni modello
+CREATE TABLE colori_disponibili (
+    id_colore INT AUTO_INCREMENT PRIMARY KEY,
+    nome_colore VARCHAR(50) NOT NULL,
+    codice_esadecimale VARCHAR(7) NOT NULL,
+    id_modello INT NOT NULL,
+    FOREIGN KEY (id_modello) REFERENCES modelli(id_modello) ON DELETE CASCADE
+);
+
+-- Inserimento dati nella tabella marchi
+INSERT INTO marchi (nome, nazione, anno_fondazione, sito_web) VALUES
+('Ferrari', 'Italia', 1939, 'https://www.ferrari.com'),
+('Lamborghini', 'Italia', 1963, 'https://www.lamborghini.com'),
+('Porsche', 'Germania', 1931, 'https://www.porsche.com'),
+('McLaren', 'Regno Unito', 1985, 'https://www.mclaren.com');
+
+-- Inserimento dati nella tabella modelli
+INSERT INTO modelli (nome, anno_produzione, velocita_max, prezzo_base, id_marchio) VALUES
+('LaFerrari', 2013, 350, 1400000, 1),
+('Aventador', 2011, 355, 500000, 2),
+('911 Turbo S', 2020, 330, 210000, 3),
+('P1', 2013, 350, 1200000, 4);
+
+-- Inserimento dati nella tabella colori_disponibili
+INSERT INTO colori_disponibili (nome_colore, codice_esadecimale, id_modello) VALUES
+('Rosso Corsa', '#CC0000', 1),
+('Giallo Modena', '#FFD700', 1),
+('Arancio Argos', '#FF4500', 2),
+('Verde Ithaca', '#33CC33', 2),
+('Blu Miami', '#0066FF', 3),
+('Argento GT', '#C0C0C0', 3),
+('Viola Aurora', '#800080', 4),
+('Nero Onyx', '#000000', 4);
+
+
